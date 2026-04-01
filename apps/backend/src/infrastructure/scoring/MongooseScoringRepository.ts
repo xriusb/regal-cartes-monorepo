@@ -8,7 +8,7 @@ export class MongooseScoringRepository implements ScoringRepository {
     const docs = await ScoringModel.find().lean().exec()
     return docs.map(
       (doc) =>
-        new Scoring({
+    new Scoring({
           id: doc._id.toString(),
           restaurantName: doc.restaurantName,
           contestant: doc.contestant,

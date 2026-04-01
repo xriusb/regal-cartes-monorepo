@@ -4,10 +4,10 @@ export interface ScoringDTO {
   id: string
   restaurantName: string
   contestant: string
-  place: number
-  food: number
-  service: number
-  price: number
+  place: number | null
+  food: number | null
+  service: number | null
+  price: number | null
 }
 
 export class GetScoringsByContestant {

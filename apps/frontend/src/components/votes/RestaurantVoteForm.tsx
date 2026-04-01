@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 interface VoteScores {
-    espai: number;
-    menjar: number;
-    servei: number;
-    preu: number;
+    espai: number | null;
+    menjar: number | null;
+    servei: number | null;
+    preu: number | null;
 }
 
 interface RestaurantVoteFormProps {
@@ -33,10 +33,16 @@ const SCORE_FIELDS: { key: keyof ScoreFields; label: string }[] = [
 export function RestaurantVoteForm({ scoringId, restaurantName, initialScores, onSubmit }: RestaurantVoteFormProps) {
     const [scores, setScores] = useState<ScoreFields>(
         initialScores
-            ? { espai: String(initialScores.espai), menjar: String(initialScores.menjar), servei: String(initialScores.servei), preu: String(initialScores.preu) }
+            ? {
+                espai:   initialScores.espai   != null ? String(initialScores.espai)   : '',
+                menjar:  initialScores.menjar  != null ? String(initialScores.menjar)  : '',
+                servei:  initialScores.servei  != null ? String(initialScores.servei)  : '',
+                preu:    initialScores.preu    != null ? String(initialScores.preu)    : '',
+              }
             : EMPTY_SCORES
     );
     const [errors, setErrors] = useState<Partial<ScoreFields>>({});
+    const [showSuccess, setShowSuccess] = useState(false);
 
     function handleChange(field: keyof ScoreFields, value: string) {
         setScores(prev => ({ ...prev, [field]: value }));
@@ -72,11 +78,12 @@ export function RestaurantVoteForm({ scoringId, restaurantName, initialScores, o
             servei: Number(scores.servei),
             preu:   Number(scores.preu),
         };
-        await fetch(`${import.meta.env.VITE_API_URL}/api/scorings/${scoringId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/scorings/${scoringId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ place: result.espai, food: result.menjar, service: result.servei, price: result.preu }),
         });
+        if (response.ok) setShowSuccess(true);
         if (onSubmit) onSubmit(result);
     }
 
@@ -86,6 +93,23 @@ export function RestaurantVoteForm({ scoringId, restaurantName, initialScores, o
     }
 
     return (
+        <>
+        {showSuccess && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+                <div className="flex flex-col items-center gap-6 px-10 py-10 bg-[#1a1a1a] border border-[#eab94e]/50">
+                    <p className="font-[Bebas_Neue] text-[#eab94e] text-3xl tracking-widest text-center">
+                        Puntuacions enviades!
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() => setShowSuccess(false)}
+                        className="font-[Bebas_Neue] px-10 py-3 bg-[#eab94e] text-[#1a1a1a] tracking-widest text-xl cursor-pointer"
+                    >
+                        Acceptar
+                    </button>
+                </div>
+            </div>
+        )}
         <div className="w-full max-w-sm mx-auto flex flex-col gap-6 px-8 py-10 bg-[#2a2a2a]">
             <h2 className="font-[Bebas_Neue] text-[#eab94e] text-4xl text-center tracking-widest">
                 {restaurantName}
@@ -131,5 +155,6 @@ export function RestaurantVoteForm({ scoringId, restaurantName, initialScores, o
                 </div>
             </form>
         </div>
+        </>
     );
 }
