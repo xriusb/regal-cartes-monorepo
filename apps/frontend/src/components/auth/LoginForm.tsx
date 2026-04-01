@@ -7,7 +7,7 @@ const VALID_USERS: Record<string, string> = {
 };
 
 interface LoginFormProps {
-    onLoginSuccess: () => void;
+    onLoginSuccess: (username: string) => void;
 }
 
 export function LoginForm({ onLoginSuccess }: LoginFormProps) {
@@ -21,7 +21,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
         const storedPassword = VALID_USERS[username];
 
         if (storedPassword && storedPassword === password) {
-            onLoginSuccess();
+            onLoginSuccess(username);
         } else {
             setError('Usuari o contrasenya incorrectes');
         }

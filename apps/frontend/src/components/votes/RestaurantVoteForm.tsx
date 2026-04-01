@@ -9,6 +9,7 @@ interface VoteScores {
 
 interface RestaurantVoteFormProps {
     restaurantName: string;
+    initialScores?: VoteScores;
     onSubmit?: (scores: VoteScores) => void;
 }
 
@@ -28,8 +29,12 @@ const SCORE_FIELDS: { key: keyof ScoreFields; label: string }[] = [
     { key: 'preu',   label: 'Preu'   },
 ];
 
-export function RestaurantVoteForm({ restaurantName, onSubmit }: RestaurantVoteFormProps) {
-    const [scores, setScores] = useState<ScoreFields>(EMPTY_SCORES);
+export function RestaurantVoteForm({ restaurantName, initialScores, onSubmit }: RestaurantVoteFormProps) {
+    const [scores, setScores] = useState<ScoreFields>(
+        initialScores
+            ? { espai: String(initialScores.espai), menjar: String(initialScores.menjar), servei: String(initialScores.servei), preu: String(initialScores.preu) }
+            : EMPTY_SCORES
+    );
     const [errors, setErrors] = useState<Partial<ScoreFields>>({});
 
     function handleChange(field: keyof ScoreFields, value: string) {
