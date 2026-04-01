@@ -6,6 +6,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { MongooseScoringRepository } from './infrastructure/scoring/MongooseScoringRepository.js'
 import { GetAllScorings } from './application/scoring/GetAllScorings.js'
+import { GetScoringsByContestant } from './application/scoring/GetScoringsByContestant.js'
 import { createScoringRouter } from './api/scoring/scoringRouter.js'
 
 async function main() {
@@ -18,7 +19,8 @@ async function main() {
 
   const repository = new MongooseScoringRepository()
   const getAllScorings = new GetAllScorings(repository)
-  const scoringRouter = createScoringRouter(getAllScorings)
+  const getScoringsByContestant = new GetScoringsByContestant(repository)
+  const scoringRouter = createScoringRouter(getAllScorings, getScoringsByContestant)
 
   const app = new Hono()
   app.route('/api', scoringRouter)
