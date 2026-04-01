@@ -1,6 +1,6 @@
 import { Scoring } from '../../domain/scoring/Scoring.js'
 import { Score } from '../../domain/scoring/Score.js'
-import { ScoringRepository } from '../../domain/scoring/ScoringRepository.js'
+import { ScoreUpdate, ScoringRepository } from '../../domain/scoring/ScoringRepository.js'
 import { ScoringModel } from './ScoringMongooseModel.js'
 
 export class MongooseScoringRepository implements ScoringRepository {
@@ -18,6 +18,26 @@ export class MongooseScoringRepository implements ScoringRepository {
           price: Score.create(doc.price),
         }),
     )
+  }
+
+  async update(id: string, scores: ScoreUpdate): Promise<Scoring> {
+    const doc = await ScoringModel.findByIdAndUpdate(
+      id,
+      { $set: scores },
+      { new: true, runValidators: true },
+    )
+      .lean()
+      .exec()
+    if (!doc) throw new Error(`Scoring not found: ${id}`)
+    return new Scoring({
+      id: doc._id.toString(),
+      restaurantName: doc.restaurantName,
+      contestant: doc.contestant,
+      place: Score.create(doc.place),
+      food: Score.create(doc.food),
+      service: Score.create(doc.service),
+      price: Score.create(doc.price),
+    })
   }
 
   async findByContestant(contestant: string): Promise<Scoring[]> {

@@ -8,6 +8,7 @@ import { cors } from 'hono/cors'
 import { MongooseScoringRepository } from './infrastructure/scoring/MongooseScoringRepository.js'
 import { GetAllScorings } from './application/scoring/GetAllScorings.js'
 import { GetScoringsByContestant } from './application/scoring/GetScoringsByContestant.js'
+import { UpdateScoring } from './application/scoring/UpdateScoring.js'
 import { createScoringRouter } from './api/scoring/scoringRouter.js'
 
 async function main() {
@@ -21,10 +22,12 @@ async function main() {
   const repository = new MongooseScoringRepository()
   const getAllScorings = new GetAllScorings(repository)
   const getScoringsByContestant = new GetScoringsByContestant(repository)
-  const scoringRouter = createScoringRouter(getAllScorings, getScoringsByContestant)
+  const updateScoring = new UpdateScoring(repository)
+  const scoringRouter = createScoringRouter(getAllScorings, getScoringsByContestant, updateScoring)
 
   const app = new Hono()
-  app.use('*', cors({ origin: 'http://localhost:5173' }))
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? 'http://localhost:5173').split(',')
+  app.use('*', cors({ origin: allowedOrigins }))
   app.route('/api', scoringRouter)
 
   const port = Number(process.env.PORT ?? 3000)

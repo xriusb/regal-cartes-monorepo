@@ -8,6 +8,7 @@ interface VoteScores {
 }
 
 interface RestaurantVoteFormProps {
+    scoringId: string;
     restaurantName: string;
     initialScores?: VoteScores;
     onSubmit?: (scores: VoteScores) => void;
@@ -29,7 +30,7 @@ const SCORE_FIELDS: { key: keyof ScoreFields; label: string }[] = [
     { key: 'preu',   label: 'Preu'   },
 ];
 
-export function RestaurantVoteForm({ restaurantName, initialScores, onSubmit }: RestaurantVoteFormProps) {
+export function RestaurantVoteForm({ scoringId, restaurantName, initialScores, onSubmit }: RestaurantVoteFormProps) {
     const [scores, setScores] = useState<ScoreFields>(
         initialScores
             ? { espai: String(initialScores.espai), menjar: String(initialScores.menjar), servei: String(initialScores.servei), preu: String(initialScores.preu) }
@@ -58,7 +59,7 @@ export function RestaurantVoteForm({ restaurantName, initialScores, onSubmit }: 
         return newErrors;
     }
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         const newErrors = validate(scores);
         if (Object.keys(newErrors).length > 0) {
@@ -71,11 +72,12 @@ export function RestaurantVoteForm({ restaurantName, initialScores, onSubmit }: 
             servei: Number(scores.servei),
             preu:   Number(scores.preu),
         };
-        if (onSubmit) {
-            onSubmit(result);
-        } else {
-            console.log('RestaurantVoteForm submitted:', result);
-        }
+        await fetch(`${import.meta.env.VITE_API_URL}/api/scorings/${scoringId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ place: result.espai, food: result.menjar, service: result.servei, price: result.preu }),
+        });
+        if (onSubmit) onSubmit(result);
     }
 
     function handleReset() {

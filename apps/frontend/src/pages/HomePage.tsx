@@ -20,7 +20,7 @@ export function HomePage({ contestant, onLogout }: HomePageProps) {
     const [scorings, setScorings] = useState<ScoringDTO[]>([]);
 
     useEffect(() => {
-        fetch(`http://localhost:3000/api/contestants/${contestant}/scorings`)
+        fetch(`${import.meta.env.VITE_API_URL}/api/contestants/${contestant}/scorings`)
             .then(res => res.json())
             .then(data => setScorings(data));
     }, [contestant]);
@@ -33,6 +33,7 @@ export function HomePage({ contestant, onLogout }: HomePageProps) {
             {scorings.map(s => (
                 <RestaurantVoteForm
                     key={s.id}
+                    scoringId={s.id}
                     restaurantName={s.restaurantName}
                     initialScores={{ espai: s.place, menjar: s.food, servei: s.service, preu: s.price }}
                 />

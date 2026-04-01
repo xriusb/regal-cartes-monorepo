@@ -1,10 +1,12 @@
 import { Hono } from 'hono'
 import { GetAllScorings } from '../../application/scoring/GetAllScorings.js'
 import { GetScoringsByContestant } from '../../application/scoring/GetScoringsByContestant.js'
+import { UpdateScoring } from '../../application/scoring/UpdateScoring.js'
 
 export function createScoringRouter(
   getAllScorings: GetAllScorings,
   getScoringsByContestant: GetScoringsByContestant,
+  updateScoring: UpdateScoring,
 ): Hono {
   const router = new Hono()
 
@@ -17,6 +19,13 @@ export function createScoringRouter(
     const contestant = c.req.param('contestant')
     const scorings = await getScoringsByContestant.execute(contestant)
     return c.json(scorings)
+  })
+
+  router.put('/scorings/:id', async (c) => {
+    const id = c.req.param('id')
+    const body = await c.req.json()
+    const result = await updateScoring.execute(id, body)
+    return c.json(result)
   })
 
   return router
