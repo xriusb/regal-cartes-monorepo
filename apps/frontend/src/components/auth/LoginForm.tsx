@@ -1,8 +1,12 @@
 import { useState } from 'react';
 
 const VALID_USERS: Record<string, string> = {
-    'xavi': 'xavi',
-    'sandra': 'sandra',
+    'xavi': 'xavi1234',
+    'sandra': 'sandra1234',
+    'adri': 'adri1234',
+    'gucci': 'gucci1234',
+    'connie': 'connie1234',
+    'bob': 'bob1234',
     'admin': 'admin'
 };
 

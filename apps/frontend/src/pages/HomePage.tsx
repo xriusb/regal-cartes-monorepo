@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { RestaurantVoteForm } from '../components/votes/RestaurantVoteForm.tsx';
+import {Header} from "../components/layout/Header.tsx";
 
 interface ScoringDTO {
     id: string;
@@ -26,9 +27,11 @@ export function HomePage({ contestant, onLogout }: HomePageProps) {
     }, [contestant]);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen gap-8 py-12">
+        <>
+        <Header />
+        <div className="flex flex-col items-center gap-8 pt-4 pb-12">
             <h1 className="font-[Bebas_Neue] text-[#eab94e] text-5xl tracking-widest">
-                Benvingut/da!
+                A puntuar {contestant}!
             </h1>
             {scorings.map(s => (
                 <RestaurantVoteForm
@@ -45,5 +48,6 @@ export function HomePage({ contestant, onLogout }: HomePageProps) {
                 Tancar sessió
             </button>
         </div>
+        </>
     );
 }
