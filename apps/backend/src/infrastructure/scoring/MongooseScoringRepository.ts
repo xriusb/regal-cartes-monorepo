@@ -40,6 +40,19 @@ export class MongooseScoringRepository implements ScoringRepository {
     })
   }
 
+  async create(restaurantName: string, contestant: string): Promise<Scoring> {
+    const doc = await ScoringModel.create({ restaurantName, contestant })
+    return new Scoring({
+      id: doc._id.toString(),
+      restaurantName: doc.restaurantName,
+      contestant: doc.contestant,
+      place: Score.create(doc.place),
+      food: Score.create(doc.food),
+      service: Score.create(doc.service),
+      price: Score.create(doc.price),
+    })
+  }
+
   async findByContestant(contestant: string): Promise<Scoring[]> {
     const docs = await ScoringModel.find({ contestant }).lean().exec()
       return docs.map(

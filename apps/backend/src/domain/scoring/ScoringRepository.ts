@@ -11,4 +11,5 @@ export interface ScoringRepository {
   findAll(): Promise<Scoring[]>
   findByContestant(contestant: string): Promise<Scoring[]>
   update(id: string, scores: ScoreUpdate): Promise<Scoring>
+  create(restaurantName: string, contestant: string): Promise<Scoring>
 }

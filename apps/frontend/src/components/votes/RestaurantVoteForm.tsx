@@ -65,7 +65,7 @@ export function RestaurantVoteForm({ scoringId, restaurantName, initialScores, o
         return newErrors;
     }
 
-    async function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.SubmitEvent) {
         e.preventDefault();
         const newErrors = validate(scores);
         if (Object.keys(newErrors).length > 0) {
